@@ -1,0 +1,69 @@
+#include <cstring>
+#include <iostream>
+using namespace std;
+int knapsackHelper(int* weight,int* value,int n,int maxWeight,int** out)
+{
+    if(out[n][maxWeight] != -1)
+    {
+        return out[n][maxWeight];
+    }
+    if(n==0)
+    {
+        out[n][maxWeight] = 0;
+        return 0;
+    }
+	if(maxWeight-weight[0] >= 0)
+    {
+        int ans = max(value[0]+knapsackHelper(weight+1,value+1,n-1,maxWeight-weight[0],out),knapsackHelper(weight+1,value+1,n-1,maxWeight,out));
+        out[n][maxWeight] = ans;
+        return ans;
+    }
+    else
+    {
+        int ans = knapsackHelper(weight+1,value+1,n-1,maxWeight,out);
+        out[n][maxWeight] = ans;
+        return ans;
+    }
+}
+int knapsack(int* weight, int* value, int n, int maxWeight) {
+    int** out = new int*[n+1];
+    for(int i=0;i<=n;i++)
+    {
+        out[i] = new int[maxWeight+1];
+        for(int j=0;j<=maxWeight;j++)
+        {
+            out[i][j] = -1;
+        }
+    }
+    int ans = knapsackHelper(weight,value,n,maxWeight,out);
+    for(int i=0;i<=n;i++)
+    {
+        delete[] out[i];
+    }
+    delete[] out;
+    return ans;
+    
+}
+
+int main() {
+    int n;
+    cin >> n;
+    int* wt = new int[n];
+    int* val = new int[n];
+
+    for (int i = 0; i < n; i++) {
+        cin >> wt[i];
+    }
+
+    for (int j = 0; j < n; j++) {
+        cin >> val[j];
+    }
+
+    int w;
+    cin >> w;
+
+    cout << knapsack(wt, val, n, w) << "\n";
+
+    delete[] wt;
+    delete[] val;
+}
